@@ -6,17 +6,18 @@ EPS = 1e-10
 # Rate of the sources in LibriSpeech
 RATE = 16000
 
-librispeech_dir = "/content/drive/MyDrive/Assignment2/LibriSpeech"
-wham_dir = "/content/drive/MyDrive/Assignment2/wham_noise"
-metadata_dir = "/content/drive/MyDrive/Assignment2"
-librimix_outdir = "/content/drive/MyDrive/Assignment2/"
+DATASET_DIR = "/data/processed/"
+librispeech_dir = os.path.join(DATASET_DIR, "LibriSpeech")
+wham_dir = os.path.join(DATASET_DIR, "wham_noise")
+metadata_dir = os.path.join(DATASET_DIR, "metadata")
 
 n_src = 2
-freqs = ['8k', '16k']
-modes = ['min', 'max']
-types = ['mix_clean', 'mix_both', 'mix_single']
+freqs = ['8k']
+modes = ['max']
+types = ['mix_both']
 
-librimix_outdir = os.path.join(librimix_outdir, f'Libri{n_src}Mix')
+librimix_outdir = os.path.join(DATASET_DIR, f'Libri{n_src}Mix')
+
 # Get the desired frequencies
 freqs = [freq.lower() for freq in freqs]
 modes = [mode.lower() for mode in modes]

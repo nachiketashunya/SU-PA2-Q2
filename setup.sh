@@ -5,7 +5,7 @@ script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Define relative paths based on the script directory
 storage_dir="$script_dir/data/raw"
-extract_dir = "$script_dir/data/processed"
+extract_dir="$script_dir/data/processed"
 librispeech_dir="$extract_dir/LibriSpeech"
 wham_dir="$extract_dir/wham_noise"
 librimix_outdir="$extract_dir"

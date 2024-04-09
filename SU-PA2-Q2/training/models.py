@@ -1,18 +1,4 @@
-#!/usr/bin/env/python3
-"""Recipe for training a neural speech separation system on wsjmix the
-dataset. The system employs an encoder, a decoder, and a masking network.
-
-To run this recipe, do the following:
-> python train.py hparams/sepformer.yaml
-> python train.py hparams/dualpath_rnn.yaml
-> python train.py hparams/convtasnet.yaml
-
-The experiment file is flexible enough to support different neural
-networks. By properly changing the parameter files, you can try
-different architectures. The script supports both wsj2mix and
-wsj3mix.
-
-
+""""
 Authors
  * Cem Subakan 2020
  * Mirco Ravanelli 2020
@@ -35,7 +21,11 @@ from tqdm import tqdm
 import csv
 import logging
 from speechbrain.core import AMPConfig
+# This package is required for SDR computation
+from mir_eval.separation import bss_eval_sources
 
+# Logger info
+logger = logging.getLogger(__name__)
 
 # Define training procedure
 class Separation(sb.Brain):
@@ -317,9 +307,6 @@ class Separation(sb.Brain):
         """This script computes the SDR and SI-SNR metrics and saves
         them into a csv file"""
 
-        # This package is required for SDR computation
-        from mir_eval.separation import bss_eval_sources
-
         # Create folders where to store audio
         save_file = os.path.join(self.hparams.output_folder, "test_results.csv")
 
@@ -456,17 +443,17 @@ def dataio_prep(hparams):
         replacements={"data_root": hparams["data_folder"]},
     )
 
-    valid_data = sb.dataio.dataset.DynamicItemDataset.from_csv(
-        csv_path=hparams["valid_data"],
-        replacements={"data_root": hparams["data_folder"]},
-    )
+    # valid_data = sb.dataio.dataset.DynamicItemDataset.from_csv(
+    #     csv_path=hparams["valid_data"],
+    #     replacements={"data_root": hparams["data_folder"]},
+    # )
 
     test_data = sb.dataio.dataset.DynamicItemDataset.from_csv(
         csv_path=hparams["test_data"],
         replacements={"data_root": hparams["data_folder"]},
     )
 
-    datasets = [train_data, valid_data, test_data]
+    datasets = [train_data, test_data]
 
     # 2. Provide audio pipelines
 
@@ -509,61 +496,4 @@ def dataio_prep(hparams):
             datasets, ["id", "mix_sig", "s1_sig", "s2_sig"]
         )
 
-    return train_data, valid_data, test_data
-
-
-if __name__ == "__main__":
-    # Load hyperparameters file with command-line overrides
-    hparams_file, run_opts, overrides = sb.parse_arguments(sys.argv[1:])
-    with open(hparams_file) as fin:
-        hparams = load_hyperpyyaml(fin, overrides)
-
-    # Initialize ddp (useful only for multi-GPU DDP training)
-    sb.utils.distributed.ddp_init_group(run_opts)
-
-    # Logger info
-    logger = logging.getLogger(__name__)
-
-    # Create experiment directory
-    sb.create_experiment_directory(
-        experiment_directory=hparams["output_folder"],
-        hyperparams_to_save=hparams_file,
-        overrides=overrides,
-    )
-
-    # Update precision to bf16 if the device is CPU and precision is fp16
-    if run_opts.get("device") == "cpu" and hparams.get("precision") == "fp16":
-        hparams["precision"] = "bf16"
-
-
-    # Load pretrained model if pretrained_separator is present in the yaml
-    if "pretrained_separator" in hparams:
-        run_on_main(hparams["pretrained_separator"].collect_files)
-        hparams["pretrained_separator"].load_collected()
-
-    # Brain class initialization
-    separator = Separation(
-        modules=hparams["modules"],
-        opt_class=hparams["optimizer"],
-        hparams=hparams,
-        run_opts=run_opts,
-        checkpointer=hparams["checkpointer"],
-    )
-
-    # re-initialize the parameters if we don't use a pretrained model
-    if "pretrained_separator" not in hparams:
-        for module in separator.modules.values():
-            separator.reset_layer_recursively(module)
-
-    # Training
-    separator.fit(
-        separator.hparams.epoch_counter,
-        train_data,
-        valid_data,
-        train_loader_kwargs=hparams["dataloader_opts"],
-        valid_loader_kwargs=hparams["dataloader_opts"],
-    )
-
-    # Eval
-    separator.evaluate(test_data, min_key="si-snr")
-    separator.save_results(test_data)
+    return train_data, test_data
