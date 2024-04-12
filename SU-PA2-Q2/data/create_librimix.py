@@ -1,15 +1,15 @@
 import os
-from .utils import create_librimix
+from utils import create_librimix
 
 # eps secures log and division
 EPS = 1e-10
 # Rate of the sources in LibriSpeech
 RATE = 16000
 
-DATASET_DIR = "/data/processed/"
+DATASET_DIR = "data/processed/"
 librispeech_dir = os.path.join(DATASET_DIR, "LibriSpeech")
 wham_dir = os.path.join(DATASET_DIR, "wham_noise")
-metadata_dir = os.path.join(DATASET_DIR, "metadata")
+metadata_dir = os.path.join("data/metadata")
 
 n_src = 2
 freqs = ['8k']

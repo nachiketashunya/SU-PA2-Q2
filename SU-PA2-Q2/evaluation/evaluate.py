@@ -1,16 +1,20 @@
 import torch 
 from torch.utils.data import DataLoader, random_split
-from ..data.make_dataset import LibriMixDataset
 from speechbrain.inference.separation import SepformerSeparation as separator
 from torchmetrics.audio import ScaleInvariantSignalNoiseRatio, SignalDistortionRatio
 import wandb 
 from tqdm import tqdm
+import sys
+
+sys.path.append("SU-PA2-Q2")
+from data.make_dataset import LibriMixDataset
+# from ..data.make_dataset import LibriMixDataset
 
 # Device 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-data_dir = "/data/processed/Libri2mix/wav8k/max/test/mix_both"
-csv_file = "/data/processed/Libri2Mix/wav8k/max/metadata/mixture_test_mix_both.csv"
+data_dir = "data/processed/Libri2mix/wav8k/max/test/mix_both"
+csv_file = "data/processed/Libri2Mix/wav8k/max/metadata/mixture_test_mix_both.csv"
 
 dataset = LibriMixDataset(data_dir, csv_file)
 
@@ -24,7 +28,11 @@ train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
 
 # Load the model
-model = separator.from_hparams(source="speechbrain/sepformer-whamr", savedir='pretrained_models/sepformer-whamr', run_opts={"device": torch.device})
+if torch.cuda.is_available():
+    model = separator.from_hparams(source="speechbrain/sepformer-whamr", savedir='pretrained_models/sepformer-whamr', run_opts={"device":"cuda"})
+else:
+    model = separator.from_hparams(source="speechbrain/sepformer-whamr", savedir='pretrained_models/sepformer-whamr')
+
 
 # SNR and SDR instance
 si_snr = ScaleInvariantSignalNoiseRatio()

@@ -21,6 +21,7 @@ from tqdm import tqdm
 import csv
 import logging
 from speechbrain.core import AMPConfig
+import wandb
 # This package is required for SDR computation
 from mir_eval.separation import bss_eval_sources
 
@@ -391,10 +392,23 @@ class Separation(sb.Brain):
                 }
                 writer.writerow(row)
 
-        logger.info("Mean SISNR is {}".format(np.array(all_sisnrs).mean()))
-        logger.info("Mean SISNRi is {}".format(np.array(all_sisnrs_i).mean()))
-        logger.info("Mean SDR is {}".format(np.array(all_sdrs).mean()))
-        logger.info("Mean SDRi is {}".format(np.array(all_sdrs_i).mean()))
+          
+        mean_sisnr = np.array(all_sisnrs).mean()
+        mean_sisnri = np.array(all_sisnrs_i).mean()
+        mean_sdr = np.array(all_sdrs).mean()
+        mean_sdri = np.array(all_sdrs_i).mean()
+        
+        logger.info("Mean SISNR is {}".format(mean_sisnr))
+        logger.info("Mean SISNRi is {}".format(mean_sisnri))
+        logger.info("Mean SDR is {}".format(mean_sdr))
+        logger.info("Mean SDRi is {}".format(mean_sdri))
+        
+        wandb.log({
+            "Mean SISNR": mean_sisnr,
+            "Mean SISNRi": mean_sisnri,
+            "Mean SDR": mean_sdr,
+            "Mean SDRi": mean_sdri 
+        })
 
     def save_audio(self, snt_id, mixture, targets, predictions):
         "saves the test audio (mixture, targets, and estimated sources) on disk"

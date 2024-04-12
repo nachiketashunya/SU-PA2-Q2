@@ -45,9 +45,9 @@ def create_custom_dataset(
     """
 
     for set_type in set_types:
-        mix_path = os.path.join(datapath, "wav8k/min/" + set_type + "/mix_both/")
-        s1_path = os.path.join(datapath, "wav8k/min/" + set_type + "/s1/")
-        s2_path = os.path.join(datapath, "wav8k/min/" + set_type + "/s2/")
+        mix_path = os.path.join(datapath, "wav8k/max/" + set_type + "/mix_both")
+        s1_path = os.path.join(datapath, "wav8k/max/" + set_type + "/s1")
+        s2_path = os.path.join(datapath, "wav8k/max/" + set_type + "/s2")
 
         files = os.listdir(mix_path)
 

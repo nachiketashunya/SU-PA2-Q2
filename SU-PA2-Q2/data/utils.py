@@ -1,4 +1,3 @@
-import torch
 import os
 import soundfile as sf
 import pandas as pd
@@ -6,6 +5,11 @@ import numpy as np
 import functools
 from scipy.signal import resample_poly
 import tqdm.contrib.concurrent
+
+# eps secures log and division
+EPS = 1e-10
+# Rate of the sources in LibriSpeech
+RATE = 16000
 
 def create_librimix(librispeech_dir, wham_dir, out_dir, metadata_dir,
                     freqs, n_src, modes, types):
