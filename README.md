@@ -48,8 +48,10 @@ Project Organization
     ├── LICENSE
     ├── README.md                               <- The top-level README for developers using this project.
     ├── data
+    |   ├── metadata                            <- Metadata about dataset
     │   ├── processed                           <- The final, canonical data sets for modeling.
-    │   └── raw                                 <- The original, immutable data dump.
+    │   ├── raw                                 <- The original, immutable data dump.
+    |   ├── yamls                               <- Yaml files of model
     │
     ├── models                                  <- Trained and serialized models, model predictions, or model summaries
     │
@@ -66,6 +68,8 @@ Project Organization
     │   │
     │   ├── utils                               <- Scripts utilities used during data generation or training
     │   │
+    |   ├── evaluation                          <- Scripts for model evaluation
+    |   | 
     │   ├── training                            <- Scripts to train models
     │   │
     │   ├── validate                            <- Scripts to validate models
