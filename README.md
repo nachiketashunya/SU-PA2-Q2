@@ -4,6 +4,8 @@
 
 Welcome to the repository for Question 2 of the Speech Assignment!
 
+This repository hosts the codebase for Question 2 of the Speech Assignment, focusing on creating the Librimix dataset from LibriSpeech clean data and WHAM noise. The primary task involves fine-tuning the Sepformer model from SpeechBrain and evaluating its performance using metrics such as SNR (Signal-to-Noise Ratio) and SDR (Signal Distortion Ratio).
+
 ### Instructions for Performing Tasks
 
 Follow these steps to perform various tasks:
